@@ -1,0 +1,7 @@
+package de.cg.fg.enums;
+
+public enum GameState {
+
+    OPEN, MENU_OPENED, PLACING, DESTROYING, PLANTING, HARVESTING, INVENTORY_OPENED, WATERING;
+
+}
