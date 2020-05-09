@@ -13,6 +13,7 @@ import java.io.IOException;
 public class Ressources {
 
     public static FileContents fcStartvals = getContents("assets//cfg//startvals.data");
+    public static FileContents fcColors = getContents("assets//cfg//colors.data");
 
     public static final Font fontBtnMainGame = new Font("Roboto Mono", Font.BOLD, 24);
     public static final Font fontMouseInfo = new Font("Roboto Mono", Font.PLAIN, 14);
@@ -32,6 +33,11 @@ public class Ressources {
     public static final Sound soundPlace = loadSound("assets//sounds//place.wav");
     public static final Sound soundHarvest = loadSound("assets//sounds//harvest.wav");
     public static final Sound soundPlant = loadSound("assets//sounds//harvest.wav");
+
+    public static final Color colorBG = Color.decode(fcColors.getFromKeyword("background"));
+    public static final Color colorMoneyLabel = Color.decode(fcColors.getFromKeyword("money label"));
+    public static final Color colorField = Color.decode(fcColors.getFromKeyword("field"));
+    public static final Color colorButtons = Color.decode(fcColors.getFromKeyword("buttons"));
 
     private static FileContents getContents(String filename) {
         try {

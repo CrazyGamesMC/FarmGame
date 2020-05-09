@@ -57,11 +57,11 @@ public class GameHandler extends GameObject {
             }
         }
 
-        new UIButton(room, room.getGameInstance().getWidth()-150, room.getGameInstance().getHeight()-100, 100, 50, Ressources.fontBtnMainGame, "PLACE", Color.BLACK, Color.GRAY, UIButton.ButtonType.PLACE);
-        new UIButton(room, room.getGameInstance().getWidth()-300, room.getGameInstance().getHeight()-100, 100, 50, Ressources.fontBtnMainGame, "MANAGE", Color.BLACK, Color.GRAY, UIButton.ButtonType.MANAGE);
-        new UIButton(room, room.getGameInstance().getWidth()-300, room.getGameInstance().getHeight()-175, 100, 50, Ressources.fontBtnMainGame, "FIELD", Color.BLACK, Color.GRAY, UIButton.ButtonType.FIELD);
+        new UIButton(room, room.getGameInstance().getWidth()-150, room.getGameInstance().getHeight()-100, 100, 50, Ressources.fontBtnMainGame, "PLACE", Color.BLACK, Ressources.colorButtons, UIButton.ButtonType.PLACE);
+        new UIButton(room, room.getGameInstance().getWidth()-300, room.getGameInstance().getHeight()-100, 100, 50, Ressources.fontBtnMainGame, "MANAGE", Color.BLACK, Ressources.colorButtons, UIButton.ButtonType.MANAGE);
+        new UIButton(room, room.getGameInstance().getWidth()-300, room.getGameInstance().getHeight()-175, 100, 50, Ressources.fontBtnMainGame, "FIELD", Color.BLACK, Ressources.colorButtons, UIButton.ButtonType.FIELD);
         progressBar = new UIProgressBar(room, 50, room.getGameInstance().getHeight()-40, room.getGameInstance().getWidth()-100, 30, 0, maxDayPart, Color.GREEN);
-        lblMoney = new UILabel(room, room.getGameInstance().getWidth()-500, room.getGameInstance().getHeight()-70, "Money: " + money + "G", Ressources.fontBtnMainGame, Color.YELLOW);
+        lblMoney = new UILabel(room, room.getGameInstance().getWidth()-500, room.getGameInstance().getHeight()-70, "Money: " + money + "G", Ressources.fontBtnMainGame, Ressources.colorMoneyLabel);
     }
 
     private boolean keyLockSpace = false;
@@ -115,10 +115,10 @@ public class GameHandler extends GameObject {
     public void draw(Graphics g) {
         CameraRenderer cr = new CameraRenderer(g, room.getCamera());
 
-        g.setColor(Color.DARK_GRAY);
+        g.setColor(Ressources.colorBG);
         g.fillRect(0,0,room.getGameInstance().getWidth(), room.getGameInstance().getHeight());
 
-        g.setColor(new Color(140, 146, 71, 255));
+        g.setColor(Ressources.colorField);
         cr.fillRect(0,0,placables[0].length*32, placables.length*32);
 
         lblMoney.setText("Money: " + money + "G");

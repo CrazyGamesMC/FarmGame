@@ -2,3 +2,4 @@ width: 1280
 height: 720
 title: Farm Game
 framerate: 60
+taskbar: false
