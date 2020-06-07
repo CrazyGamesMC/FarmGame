@@ -23,6 +23,7 @@ public class Ressources {
     public static final Sprite spriteFieldStage2 = new Sprite("assets//fields//stage2.png", 32, 32, 0);
     public static final Sprite spriteFieldStage3 = new Sprite("assets//fields//stage3.png", 32, 32, 0);
     public static final Sprite spriteFlourMachine = new Sprite("assets//flour_machine.png", 32, 32, 0);
+    public static final Sprite spritePig = new Sprite("assets//pig.png", 32, 32, 0);
 
     public static final int startMoney = Integer.parseInt(fcStartvals.getFromKeyword("money"));
     public static final int startMaxDayPart = Integer.parseInt(fcStartvals.getFromKeyword("max day part"));

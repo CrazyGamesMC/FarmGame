@@ -2,7 +2,7 @@ package de.cg.fg.enums;
 
 public enum ItemType {
 
-    NONE(0), WHEAT(5), CORN(10), FLOUR(15);
+    NONE(0), WHEAT(5), CORN(10), FLOUR(15), MEAT(45), MILK(5), EGG(5);
 
     private int baseValue = 0;
 

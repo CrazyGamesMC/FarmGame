@@ -7,6 +7,7 @@ import de.cg.cgge.gui.Sprite;
 
 import java.awt.*;
 
+
 public class Placable extends GameObject{
 
     protected Sprite sprite;

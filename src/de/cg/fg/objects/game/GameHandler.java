@@ -11,8 +11,10 @@ import de.cg.fg.enums.GameState;
 import de.cg.fg.enums.ItemType;
 import de.cg.fg.enums.PlacableType;
 import de.cg.fg.ctrl.Ressources;
+import de.cg.fg.objects.game.placables.Animal;
 import de.cg.fg.objects.game.placables.Field;
 import de.cg.fg.objects.game.placables.FlourMachine;
+import de.cg.fg.objects.game.placables.animals.Pig;
 import de.cg.fg.objects.ui.UIButton;
 import de.cg.fg.objects.ui.UILabel;
 import de.cg.fg.objects.ui.UINotification;
@@ -122,7 +124,6 @@ public class GameHandler extends GameObject {
         cr.fillRect(0,0,placables[0].length*32, placables.length*32);
 
         lblMoney.setText("Money: " + money + "G");
-
     }
 
     @Override
@@ -238,6 +239,11 @@ public class GameHandler extends GameObject {
                     new MenuFlourMachine(room, 100, 100, 500, 500, fm);
                 }
 
+                else if (placables[fy][fx] instanceof Animal) {
+                    Animal animal = (Animal) placables[fy][fx];
+                    new MenuAnimalInfo(room, animal);
+                }
+
             }
 
             else if (state == GameState.HARVESTING) {
@@ -280,6 +286,7 @@ public class GameHandler extends GameObject {
 
                         if (currentlyPlacing == PlacableType.FIELD) placable = new Field(room, fx, fy);
                         else if (currentlyPlacing == PlacableType.FLOUR_MACHINE) placable = new FlourMachine(room, fx, fy);
+                        else if (currentlyPlacing == PlacableType.PIG) placable = new Pig(room, fx, fy);
 
                         else placable = new Placable(room, null, fx, fy);
 
@@ -340,6 +347,8 @@ public class GameHandler extends GameObject {
     public boolean checkIfFieldsAreFree(int fx, int fy) {
         int size = currentlyPlacing.getSize();
 
+        if (fx < 0 || fy < 0) return false;
+
         if (size + fx > placables[0].length) return false;
 
         if (size + fy > placables.length) return false;
@@ -381,6 +390,33 @@ public class GameHandler extends GameObject {
         return (int) (Math.pow(Math.pow(placables.length, 2)/10, 1.2)+Math.pow(employees*4, 2))/5;
     }
 
+    public boolean checkItemInInventory(ItemType type, int amount, int minQuality) {
 
+        int amountFound = 0;
+
+        for (InventoryItem item : inventory) {
+            if (item.getType() != type) continue;
+            if (item.getQuality() < minQuality) continue;
+
+            amountFound++;
+
+            if (amountFound == amount) return true;
+        }
+
+        return false;
+
+    }
+
+    public void removeFromInventory(ItemType type, int amount, int minQuality) {
+        for (int i = 0; i<amount; i++) {
+            for (int j = 0; j<inventory.size(); j++) {
+                InventoryItem item = inventory.get(j);
+                if (item.getType() != type) continue;
+                if (item.getQuality() < minQuality) continue;
+                inventory.remove(item);
+                break;
+            }
+        }
+    }
 
 }
