@@ -14,6 +14,7 @@ public class MenuFieldInfo extends UIMenu {
     private UILabel lblName;
     private UILabel lblAutoWater;
 
+
     private UISwitch swAutoWater;
 
     private Field field;
@@ -44,11 +45,11 @@ public class MenuFieldInfo extends UIMenu {
                 int currentAutoEmployees = Main.gc.handler.employeesUsedForAuto;
                 int currentEmployees = Main.gc.handler.employees;
 
-                if (currentAutoEmployees < currentEmployees*2) {
+                if (currentAutoEmployees < currentEmployees*Ressources.employeeIncrease) {
                     Main.gc.handler.employeesUsedForAuto++;
                     Main.gc.handler.increaseDayPart();
                     field.setAutoWatered(true);
-                    new UINotification(room, "Employee used: " + (currentAutoEmployees+1) + "/" + currentEmployees*2, Color.GREEN);
+                    new UINotification(room, "Employee used: " + (currentAutoEmployees+1) + "/" + currentEmployees*Ressources.employeeIncrease, Color.GREEN);
                 }
 
                 else {

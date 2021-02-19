@@ -1,6 +1,7 @@
 package de.cg.fg.ctrl;
 
 import de.cg.fg.enums.ItemType;
+import de.cg.fg.objects.game.Placable;
 
 import java.util.Arrays;
 import java.util.Scanner;
@@ -52,6 +53,22 @@ public class Main {
                     } catch(Exception e) {
                         e.printStackTrace();
                     }
+                }
+
+                else if (cmd.equalsIgnoreCase("placables")) {
+                    Placable[][] placables = gc.handler.placables;
+                    int w = placables[0].length;
+                    int h  =placables.length;
+
+                    for (int y = 0; y<h; y++) {
+                        System.out.print("\n");
+                        for (int x = 0; x<w; x++) {
+                            Placable p = placables[y][x];
+                            if (p == null) System.out.print("[]");
+                            else           System.out.print("[" + placables[y][x].getClass().getSimpleName() + "]");
+                        }
+                    }
+
                 }
 
             }

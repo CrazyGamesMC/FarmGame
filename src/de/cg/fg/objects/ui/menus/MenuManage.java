@@ -15,6 +15,8 @@ public class MenuManage extends UIMenu {
     private UIButton btnAddEmployee;
     private UIButton btnRemoveEmployee;
 
+    private UIButton btnLoan;
+
     public MenuManage(Room room, int x, int y, int w, int h) {
         super(room, x, y, w, h);
 
@@ -32,6 +34,10 @@ public class MenuManage extends UIMenu {
 
         btnAddEmployee = new UIButton(room, x+65, y+150, 50, 50, Ressources.fontBtnMainGame, "+", Color.BLACK, Color.GRAY, UIButton.ButtonType.MENU_MANAGE_EMPLOYEE_ADD);
         addUIObject(btnAddEmployee);
+
+        btnLoan = new UIButton(room, x+10, y+250, 150, 50, Ressources.fontBtnMainGame, "Take Loan", Color.BLACK,
+                (Main.gc.handler.currentLoan == null ? Color.GRAY : Color.DARK_GRAY), UIButton.ButtonType.ANIMAL_BUTCHER);
+        addUIObject(btnLoan);
 
 
     }
@@ -60,6 +66,15 @@ public class MenuManage extends UIMenu {
                 lblCost.setText("Daily Cost: " + Main.gc.handler.getDailyCost());
             }
         }
+
+        if (btnLoan.fetchClick())
+        {
+            if (Main.gc.handler.currentLoan != null) return;
+            die();
+            new MenuLoan(room, 100, 100, 500, 500);
+        }
+
+
     }
 
 }

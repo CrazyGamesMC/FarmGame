@@ -22,6 +22,8 @@ public class Machine extends Placable {
 
     public MachineType type = MachineType.NONE;
 
+    public boolean autoFetch = false;
+
     public Machine(Room room, Sprite sprite, int fx, int fy) {
         super(room, sprite, fx, fy);
     }
@@ -85,6 +87,25 @@ public class Machine extends Placable {
         if (produced) {
             new UINotification(room, "Machine produced one " + reward.name(), Color.GREEN);
         }
+
+        if (autoFetch)
+        {
+            for (InventoryItem needed : neededItems)
+            {
+                for (InventoryItem item : Main.gc.handler.inventory)
+                {
+                    if (item.getType() == needed.getType())
+                    {
+                        Main.gc.handler.inventory.remove(item);
+                        inventory.add(item);
+                        new UINotification(room, "Item fetched: " + item.getType().name(), Color.GREEN);
+                        break;
+                    }
+                }
+            }
+        }
     }
+
+
 
 }

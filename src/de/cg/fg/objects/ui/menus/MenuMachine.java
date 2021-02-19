@@ -6,10 +6,7 @@ import de.cg.fg.ctrl.Main;
 import de.cg.fg.ctrl.Ressources;
 import de.cg.fg.enums.GameState;
 import de.cg.fg.objects.game.placables.Machine;
-import de.cg.fg.objects.ui.UIButton;
-import de.cg.fg.objects.ui.UILabel;
-import de.cg.fg.objects.ui.UIMenu;
-import de.cg.fg.objects.ui.UINotification;
+import de.cg.fg.objects.ui.*;
 
 import java.awt.*;
 
@@ -27,6 +24,9 @@ public class MenuMachine extends UIMenu {
 
     private UIButton btnProduce;
 
+    private UISwitch swAuto;
+
+
     public MenuMachine(Room room, int x, int y, int w, int h, Machine machine) {
         super(room, x, y, w, h);
         this.machine = machine;
@@ -39,6 +39,10 @@ public class MenuMachine extends UIMenu {
         addUIObject(btnAdd);
         this.btnProduce = new UIButton(room, x+w-160, y+h-50, 140, 40, Ressources.fontBtnMainGame, "PRODUCE", Color.BLACK, Color.GRAY, UIButton.ButtonType.MENU_MACHINE_PRODUCE);
         addUIObject(btnProduce);
+
+        this.swAuto = new UISwitch(room, x+w-80, y+100);
+        addUIObject(swAuto);
+        swAuto.setActivated(machine.autoFetch);
 
         initItems();
 
@@ -100,8 +104,32 @@ public class MenuMachine extends UIMenu {
                 new UINotification(room, "Not enough items in machine inventory", Color.RED);
             }
         }
-    }
 
+        if (swAuto.fetchStateChange())
+        {
+            if (swAuto.isActivated())
+            {
+                if (Main.gc.handler.employeesUsedForAuto >= Main.gc.handler.employees*Ressources.employeeIncrease)
+                {
+                    swAuto.setActivated(false);
+                    new UINotification(room, "Not enough employees available", Color.RED);
+                    return;
+                }
+
+                Main.gc.handler.employeesUsedForAuto++;
+                Main.gc.handler.increaseDayPart();
+                machine.autoFetch = true;
+                new UINotification(room, "Employee used: " + (Main.gc.handler.employeesUsedForAuto+1) + "/" + Main.gc.handler.employees*Ressources.employeeIncrease, Color.GREEN);
+            }
+            else
+            {
+                Main.gc.handler.employeesUsedForAuto--;
+                Main.gc.handler.increaseDayPart();
+                machine.autoFetch = false;
+                new UINotification(room, "Employee removed: " + (Main.gc.handler.employeesUsedForAuto+1) + "/" + Main.gc.handler.employees*Ressources.employeeIncrease, Color.GREEN);
+            }
+        }
+    }
 
 
 

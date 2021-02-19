@@ -38,7 +38,6 @@ public class Animal extends Placable {
     @Override
     public void increaseDay() {
         System.out.println("Increased pig day");
-        moveAnimalAtRandom();
 
         Random random = new Random();
 
@@ -98,6 +97,8 @@ public class Animal extends Placable {
         var gh = Main.gc.handler;
 
         if (!gh.checkItemInInventory(eats, 1, -1)) return false;
+
+        moveAnimalAtRandom();
 
         needsFood = false;
         gh.removeFromInventory(eats, 1, -1);

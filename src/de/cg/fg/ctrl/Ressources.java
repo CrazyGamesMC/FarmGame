@@ -24,9 +24,12 @@ public class Ressources {
     public static final Sprite spriteFieldStage3 = new Sprite("assets//fields//stage3.png", 32, 32, 0);
     public static final Sprite spriteFlourMachine = new Sprite("assets//flour_machine.png", 32, 32, 0);
     public static final Sprite spritePig = new Sprite("assets//pig.png", 32, 32, 0);
+    public static final Sprite spriteOven = new Sprite("assets//oven.png", 32, 32, 0);
+    public static final Sprite spriteChicken = new Sprite("assets//chicken.png", 32, 32, 0);
 
     public static final int startMoney = Integer.parseInt(fcStartvals.getFromKeyword("money"));
     public static final int startMaxDayPart = Integer.parseInt(fcStartvals.getFromKeyword("max day part"));
+    public static final int employeeIncrease = Integer.parseInt(fcStartvals.getFromKeyword("increase on employee adding"));
 
     public static final Sound soundClick = loadSound("assets//sounds//click.wav");
     public static final Sound soundInventoryOpen = loadSound("assets//sounds//inventory_open.wav");

@@ -11,17 +11,17 @@ import java.awt.event.MouseEvent;
 
 public class UIButton extends UIObject {
 
-    private boolean isClicked = false;
+    protected boolean isClicked = false;
 
-    private String text;
+    protected String text;
 
-    private Color fg;
-    private Color bg;
-    private Font font;
+    protected Color fg;
+    protected Color bg;
+    protected Font font;
 
     protected MouseHelper mh = new MouseHelper(room.getGameInstance());
 
-    private ButtonType type;
+    protected ButtonType type;
 
     public UIButton(Room room, int x, int y, int w, int h, Font font, String text, Color fg, Color bg, ButtonType type) {
         super(room, x, y);
@@ -72,7 +72,7 @@ public class UIButton extends UIObject {
         int mx = mh.getMouseX();
         int my = mh.getMouseY();
 
-        if (Main.gc.handler.state != GameState.INVENTORY_OPENED || type == ButtonType.INVENTORY) {
+        if (Main.gc.handler != null && (Main.gc.handler.state != GameState.INVENTORY_OPENED || type == ButtonType.INVENTORY)) {
             if (mx > x && mx < x + w && my > y && my < y + h) {
                 isClicked = true;
                 Ressources.soundClick.play();
@@ -96,14 +96,16 @@ public class UIButton extends UIObject {
 
 
     public enum ButtonType {
-        PLACE, MANAGE, FIELD,
-        MENU_PLACE_FIELD, MENU_PLACE_FLOUR_MACHINE, MENU_PLACE_PIG,
+        PLACE, MANAGE, FIELD, RESEARCH,
+        MENU_MAIN_START,
+        MENU_PLACE_FIELD, MENU_PLACE_FLOUR_MACHINE, MENU_PLACE_PIG, MENU_PLACE_OVEN, MENU_PLACE_CHICKEN,
         MENU_SELL_ADD, MENU_SELL_REMOVE,
-        MENU_FIELD_PLANT, MENU_FIELD_HARVEST, MENU_FIELD_WATER,
+        MENU_FIELD_PLANT, MENU_FIELD_HARVEST, MENU_FIELD_WATER, MENU_FIELD_FERTILIZE,
         MENU_MANAGE_EMPLOYEE_ADD, MENU_MANAGE_EMPLOYEE_REMOVE,
         MENU_MACHINE_ADD, MENU_MACHINE_PRODUCE,
         CROP_WHEAT, CROP_CORN,
         ANIMAL_FEED, ANIMAL_COLLECT, ANIMAL_BUTCHER,
+        START_RESEARCH,
         INVENTORY;
     }
 

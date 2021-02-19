@@ -6,6 +6,7 @@ import de.cg.cgge.game.Room;
 import de.cg.cgge.io.KeyManager;
 import de.cg.cgge.io.MouseHelper;
 import de.cg.fg.ctrl.InventoryItem;
+import de.cg.fg.ctrl.Loan;
 import de.cg.fg.enums.CropType;
 import de.cg.fg.enums.GameState;
 import de.cg.fg.enums.ItemType;
@@ -14,6 +15,8 @@ import de.cg.fg.ctrl.Ressources;
 import de.cg.fg.objects.game.placables.Animal;
 import de.cg.fg.objects.game.placables.Field;
 import de.cg.fg.objects.game.placables.FlourMachine;
+import de.cg.fg.objects.game.placables.Oven;
+import de.cg.fg.objects.game.placables.animals.Chicken;
 import de.cg.fg.objects.game.placables.animals.Pig;
 import de.cg.fg.objects.ui.UIButton;
 import de.cg.fg.objects.ui.UILabel;
@@ -26,6 +29,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
+import static de.cg.fg.utils.StringConstants.*;
+
 public class GameHandler extends GameObject {
 
     public int money = Ressources.startMoney;
@@ -35,8 +40,11 @@ public class GameHandler extends GameObject {
     public int employees = 0;
     public int employeesUsedForAuto = 0;
 
+    public boolean[] researched = new boolean[10];
+
     public Placable[][] placables = new Placable[16][16];
     public GameState state = GameState.OPEN;
+    public Loan currentLoan = null;
 
     public PlacableType currentlyPlacing = PlacableType.NONE;
     public CropType currentlyPlanting = CropType.EMPTY;
@@ -47,6 +55,7 @@ public class GameHandler extends GameObject {
     private KeyManager keyManager = room.getGameInstance().getDrawer().getWindow().getKeyManger();
 
     private UILabel lblMoney;
+    private UILabel lblState;
     private UIProgressBar progressBar;
 
 
@@ -59,14 +68,15 @@ public class GameHandler extends GameObject {
             }
         }
 
-        new UIButton(room, room.getGameInstance().getWidth()-150, room.getGameInstance().getHeight()-100, 100, 50, Ressources.fontBtnMainGame, "PLACE", Color.BLACK, Ressources.colorButtons, UIButton.ButtonType.PLACE);
-        new UIButton(room, room.getGameInstance().getWidth()-300, room.getGameInstance().getHeight()-100, 100, 50, Ressources.fontBtnMainGame, "MANAGE", Color.BLACK, Ressources.colorButtons, UIButton.ButtonType.MANAGE);
-        new UIButton(room, room.getGameInstance().getWidth()-300, room.getGameInstance().getHeight()-175, 100, 50, Ressources.fontBtnMainGame, "FIELD", Color.BLACK, Ressources.colorButtons, UIButton.ButtonType.FIELD);
+        new UIButton(room, room.getGameInstance().getWidth()-200, room.getGameInstance().getHeight()-100, 150, 50, Ressources.fontBtnMainGame, "PLACE", Color.BLACK, Ressources.colorButtons, UIButton.ButtonType.PLACE);
+        new UIButton(room, room.getGameInstance().getWidth()-375, room.getGameInstance().getHeight()-100, 150, 50, Ressources.fontBtnMainGame, "MANAGE", Color.BLACK, Ressources.colorButtons, UIButton.ButtonType.MANAGE);
+        new UIButton(room, room.getGameInstance().getWidth()-200, room.getGameInstance().getHeight()-175, 150, 50, Ressources.fontBtnMainGame, "FIELD", Color.BLACK, Ressources.colorButtons, UIButton.ButtonType.FIELD);
+        new UIButton(room, room.getGameInstance().getWidth()-375, room.getGameInstance().getHeight()-175, 150, 50, Ressources.fontBtnMainGame, "RESEARCH", Color.BLACK, Ressources.colorButtons, UIButton.ButtonType.RESEARCH);
         progressBar = new UIProgressBar(room, 50, room.getGameInstance().getHeight()-40, room.getGameInstance().getWidth()-100, 30, 0, maxDayPart, Color.GREEN);
-        lblMoney = new UILabel(room, room.getGameInstance().getWidth()-500, room.getGameInstance().getHeight()-70, "Money: " + money + "G", Ressources.fontBtnMainGame, Ressources.colorMoneyLabel);
+        lblMoney = new UILabel(room, room.getGameInstance().getWidth()-600, room.getGameInstance().getHeight()-70, "Money: " + money + "G", Ressources.fontBtnMainGame, Ressources.colorMoneyLabel);
+        lblState = new UILabel(room, room.getGameInstance().getWidth()-300, 50, "", Ressources.fontBtnMainGame, Color.WHITE);
     }
 
-    private boolean keyLockSpace = false;
 
     @Override
     public void step() {
@@ -86,35 +96,54 @@ public class GameHandler extends GameObject {
                         else if (btn.getType() == UIButton.ButtonType.FIELD) {
                             new MenuFieldWork(room, 100, 100, 500, 500);
                         }
+                        else if (btn.getType() == UIButton.ButtonType.RESEARCH) {
+                            new MenuResearch(room);
+                        }
                     }
                 }
             }
         }
-        else if (state == GameState.PLACING || state == GameState.PLANTING || state == GameState.HARVESTING || state == GameState.WATERING) {
+        else if (state == GameState.PLACING || state == GameState.PLANTING || state == GameState.HARVESTING || state == GameState.WATERING || state == GameState.FERTILIZING) {
             if (keyManager.checkKey(KeyEvent.VK_ESCAPE)) {
                 state = GameState.OPEN;
             }
         }
 
+        /*  INPUTS  */
         if (state == GameState.OPEN) {
-            if (keyManager.checkKey(KeyEvent.VK_I)) {
+            if (keyManager.checkInput(INVENTORY_OPENED)) {
                 new MenuInventory(room);
             }
 
-            if (keyManager.checkKey(KeyEvent.VK_Q)) {
-                if (!keyLockSpace) {
-                    increaseDayPart();
-                }
-                keyLockSpace = true;
-            } else {
-                keyLockSpace = false;
+            if (keyManager.checkInput(PROGRESS_DAY)) {
+                increaseDayPart();
             }
+
+            if (keyManager.checkInput(SWITCH_HARVEST)) {
+                state = GameState.HARVESTING;
+            }
+
+            if (keyManager.checkInput(SWITCH_WATERING)) {
+                state = GameState.WATERING;
+            }
+        }
+
+        if (state == GameState.HARVESTING) {
+
+        }
+
+        /*  STATE NOTICE    */
+        if (state != GameState.OPEN && state != GameState.INVENTORY_OPENED && state != GameState.MENU_OPENED) {
+            lblState.setText(state.name());
+        } else {
+            lblState.setText("");
         }
 
     }
 
     @Override
     public void draw(Graphics g) {
+        /*  Rendering scenery   */
         CameraRenderer cr = new CameraRenderer(g, room.getCamera());
 
         g.setColor(Ressources.colorBG);
@@ -184,6 +213,24 @@ public class GameHandler extends GameObject {
                     }
                 }
 
+                else if (state == GameState.FERTILIZING) {
+                    Placable placable = placables[y][x];
+
+                    if (placable instanceof Field) {
+                        Field field = (Field) placable;
+                        if (field.getCropType() != CropType.EMPTY && !field.isFertilized()) {
+                            g.setColor(new Color(224, 116, 0, 200));
+                            cr.fillRect(x * 32, y * 32, 32, 32);
+                        }
+                    }
+
+                    int[] fieldOfMouse = getFieldOfMouse();
+                    if (fieldOfMouse[0] == x && fieldOfMouse[1] == y) {
+                        g.setColor(new Color(200, 200, 200, 70));
+                        cr.fillRect(x * 32, y * 32, 32, 32);
+                    }
+                }
+
                 else if (state == GameState.HARVESTING) {
                     Placable placable = placables[y][x];
 
@@ -239,6 +286,12 @@ public class GameHandler extends GameObject {
                     new MenuFlourMachine(room, 100, 100, 500, 500, fm);
                 }
 
+
+                else if (placables[fy][fx] instanceof Oven) {
+                    Oven oven = (Oven) placables[fy][fx];
+                    new MenuOven(room, 100, 100, 500, 500, oven);
+                }
+
                 else if (placables[fy][fx] instanceof Animal) {
                     Animal animal = (Animal) placables[fy][fx];
                     new MenuAnimalInfo(room, animal);
@@ -287,6 +340,8 @@ public class GameHandler extends GameObject {
                         if (currentlyPlacing == PlacableType.FIELD) placable = new Field(room, fx, fy);
                         else if (currentlyPlacing == PlacableType.FLOUR_MACHINE) placable = new FlourMachine(room, fx, fy);
                         else if (currentlyPlacing == PlacableType.PIG) placable = new Pig(room, fx, fy);
+                        else if (currentlyPlacing == PlacableType.OVEN) placable = new Oven(room, fx, fy);
+                        else if (currentlyPlacing == PlacableType.CHICKEN) placable = new Chicken(room, fx, fy);
 
                         else placable = new Placable(room, null, fx, fy);
 
@@ -329,6 +384,36 @@ public class GameHandler extends GameObject {
                 }
             }
 
+            else if (state == GameState.FERTILIZING)
+            {
+                if (placables[fy][fx] instanceof Field)
+                {
+                    var f = (Field) placables[fy][fx];
+
+                    if (f.getCropType() == CropType.EMPTY)
+                    {
+                        new UINotification(room, "You can't fertilize an empty field", Color.RED);
+                        return;
+                    }
+
+                    if (f.isFertilized())
+                    {
+                        new UINotification(room, "This field is already fertilized", Color.RED);
+                        return;
+                    }
+
+                    if (money < 2)
+                    {
+                        new UINotification(room, "You don't have enough money!", Color.RED);
+                        return;
+                    }
+
+                    money -= 2;
+                    increaseDayPart();
+                    f.setFertilized(true);
+                }
+            }
+
             else if (state == GameState.WATERING) {
                 if (placables[fy][fx] instanceof Field) {
                     Field f = (Field) placables[fy][fx];
@@ -346,6 +431,7 @@ public class GameHandler extends GameObject {
 
     public boolean checkIfFieldsAreFree(int fx, int fy) {
         int size = currentlyPlacing.getSize();
+        System.out.println("Checking " + fx + ", " + fy);
 
         if (fx < 0 || fy < 0) return false;
 
@@ -374,6 +460,7 @@ public class GameHandler extends GameObject {
     }
 
     private void simulateDayEnd() {
+        System.out.println("DEBUG - Simulating day end!");
         for (int y = 0; y<placables.length; y++) {
             for (int x = 0; x<placables[0].length; x++) {
                 Placable placable = placables[y][x];
@@ -384,10 +471,18 @@ public class GameHandler extends GameObject {
         }
 
         money-=getDailyCost();
+        if (currentLoan != null) currentLoan.paybackChecker();
     }
 
     public int getDailyCost() {
-        return (int) (Math.pow(Math.pow(placables.length, 2)/10, 1.2)+Math.pow(employees*4, 2))/5;
+        int cost = (int) (Math.pow(Math.pow(placables.length, 2)/10, 1.2));
+        cost += Math.pow(employees*4, 2);
+        cost/=5;
+        if (currentLoan != null && currentLoan.getDaysGoing() > 10)
+        {
+            cost += currentLoan.getDailyCost();
+        }
+        return cost;
     }
 
     public boolean checkItemInInventory(ItemType type, int amount, int minQuality) {

@@ -7,6 +7,9 @@ import de.cg.fg.ctrl.Ressources;
 import de.cg.fg.enums.GameState;
 import de.cg.fg.objects.ui.UIButton;
 import de.cg.fg.objects.ui.UIMenu;
+import de.cg.fg.objects.ui.UINotification;
+
+import static de.cg.fg.utils.StringConstants.*;
 
 import java.awt.*;
 
@@ -15,6 +18,7 @@ public class MenuFieldWork extends UIMenu {
     private UIButton btnPlant;
     private UIButton btnHarvest;
     private UIButton btnWater;
+    private UIButton btnFertilize;
 
     public MenuFieldWork(Room room, int x, int y, int w, int h) {
         super(room, x, y, w, h);
@@ -25,6 +29,8 @@ public class MenuFieldWork extends UIMenu {
         addUIObject(btnHarvest);
         btnWater = new UIButton(room, x+20, y+160, 300, 50, Ressources.fontBtnMainGame, "WATER", Color.BLACK, Color.GRAY, UIButton.ButtonType.MENU_FIELD_WATER);
         addUIObject(btnWater);
+        btnFertilize = new UIButton(room, x+20, y+220, 300, 50, Ressources.fontBtnMainGame, "FERTILIZE | 2G", Color.BLACK, (Main.gc.handler.researched[RESEARCH_FERTILIZER] ? Color.GRAY : Color.DARK_GRAY), UIButton.ButtonType.MENU_FIELD_FERTILIZE);
+        addUIObject(btnFertilize);
 
     }
 
@@ -48,6 +54,17 @@ public class MenuFieldWork extends UIMenu {
                     if (btn.getType() == UIButton.ButtonType.MENU_FIELD_WATER) {
                         die();
                         Main.gc.handler.state = GameState.WATERING;
+                    }
+
+                    if (btn.getType() == UIButton.ButtonType.MENU_FIELD_FERTILIZE)
+                    {
+                        if (!Main.gc.handler.researched[RESEARCH_FERTILIZER])
+                        {
+                            new UINotification(room, "This has not yet been researched!", Color.RED);
+                            return;
+                        }
+                        die();
+                        Main.gc.handler.state = GameState.FERTILIZING;
                     }
 
                 }

@@ -34,6 +34,8 @@ public class Field extends Placable {
         currentDay++;
         if (needsWater && cropType != CropType.EMPTY && !autoWatered)
             daysWithoutWater++;
+        if (isFertilized)
+            daysWithFertilization++;
         isFertilized = false;
         needsWater = !autoWatered;
         updateSprite();
